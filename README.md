@@ -12,3 +12,7 @@ To visulize the tracking results, run the following command:
 ```
 python visualize_tracking.py
 ```
+Run the following command to lift tracklets to 3D (preliminary):
+```
+python lift_3d.py
+```
