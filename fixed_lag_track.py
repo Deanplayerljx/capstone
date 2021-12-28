@@ -191,8 +191,6 @@ for fid in tqdm(range(lag, seq_len)):
         backward_est_bboxes = two_dir_track(tracker_b, imgs_b, [x1, y1, x2, y2], img)
         if forward_est_bboxes == None or backward_est_bboxes == None:
             continue
-        else:
-            print('pass cross check!')
 
         for idx, est_bbox in enumerate(forward_est_bboxes):
             fid_f = mid_fid + 1 + idx
