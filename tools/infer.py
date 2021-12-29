@@ -1,11 +1,11 @@
 import argparse
-
 import cv2
 import numpy as np
 import torch
 import os
 import json
 from tqdm import tqdm
+import pickle
 
 from vedacore.image import imread, imwrite
 from vedacore.misc import Config, color_val, load_weights
@@ -19,7 +19,8 @@ def parse_args():
     parser.add_argument('config', help='config file path')
     # parser.add_argument('imgname', help='image file name')
     parser.add_argument('img_folder', help='image file name')
-
+    parser.add_argument("out_base", help="out file name")
+    parser.add_argument("--precal-det", help="pre calculate prediction")
     args = parser.parse_args()
     return args
 
@@ -70,8 +71,8 @@ def plot_result(result, imgfp, class_names, outfp='out.jpg'):
                     cv2.FONT_HERSHEY_COMPLEX, font_scale, text_color)
     imwrite(img, outfp)
 
-
-
+    
+    
 def main():
 
     args = parse_args()
@@ -79,7 +80,7 @@ def main():
     # imgname = args.imgname
     img_folder = args.img_folder
     img_base_dir = '/'.join(img_folder.split('/')[:-1])
-    print(img_base_dir)
+    
     class_names = cfg.class_names
 
     test_cfg = cfg.infer_engine.test_cfg
@@ -90,11 +91,13 @@ def main():
     write_image = True
     result_dict = {}
     # print(sorted(os.listdir(img_folder)))
-    out_folder = "overfit_tina_face_{}_{}".format(test_cfg.score_thr, test_cfg.nms.iou_thr)
-    out_folder = os.path.join(img_base_dir, out_folder)
+    out_folder = "tina_face_finetune_{}_{}".format(test_cfg.score_thr, test_cfg.nms.iou_thr)
+    out_folder = os.path.join(args.out_base, out_folder)
     if not os.path.exists(out_folder):
         os.mkdir(out_folder)
-
+    if args.precal_det is not None:
+        with open(args.precal_det, "rb") as f:
+            results = pickle.load(f)
     for idx, file in enumerate(tqdm(sorted(os.listdir(img_folder)))):
 
         if file.endswith('.jpg'):
@@ -111,7 +114,10 @@ def main():
                 # just get the actual data from DataContainer
                 data['img_metas'] = data['img_metas'][0].data
                 data['img'] = data['img'][0].data
-            result = engine.infer(data['img'], data['img_metas'])[0]
+            if args.precal_det is not None:
+                result = results[file]
+            else:
+                result = engine.infer(data['img'], data['img_metas'])[0]
             # print(result)
             if write_image:
                 plot_result(result, img_path, class_names, outfp=os.path.join(out_folder, file))

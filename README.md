@@ -28,6 +28,25 @@ pip install cvxpy
 ### Data
 We used a short clip from [this video](https://www.youtube.com/watch?v=VD6Fc5d1VFU) (3:50-4:20) for testing. The clip can be found [here](https://drive.google.com/file/d/1Gv4O1XOem-Jwp0ICDQegC6k23MgvIUpC/view?usp=sharing). We downsampled the clip to 30 fps by saving every other frame. The extracted images can be found [here](https://drive.google.com/file/d/1xEPNLovIiK4r8-PxiaDqeap6iY4_4gdZ/view?usp=sharing)
 
+Dataset for detection is located in [here](https://drive.google.com/file/d/1C550hilabCcMl56DZ58enhJw_usoUKJY/view?usp=sharing). Please download and extract to `data/face_clip` before starting to do detection. 
+
+
+### Detection
+Run the following command to traing tinaface detection on go-pro captured head dataset
+```
+python tools/trainval.py configs/trainval/tinaface/tinaface_r50_fpn_gn_dcn_custom.py --workdir YOUR_MODEL_DIR
+```
+
+Run the following command to evaluate the result
+```
+python tools/test.py configs/trainval/tinaface/tinaface_r50_fpn_gn_dcn_custom.py MODEL_CHECKPOINT IOU_THRESHOLD --out OUTPUT_RESULT_DICT
+```
+
+Run the following command for inference images, the model checkpoint is specified in config file
+
+```
+python tools/infer.py configs/infer/tinaface/tinaface_r50_fpn_gn_dcn.py INPUT_IMG_DIR OUT_IMG_DIR
+```
 ### Tracking
 Run the following command to get fixed-lag tracking results:
 ```

@@ -1,17 +1,17 @@
 # 1. data
 dataset_type = 'CustomDataset'
-data_root = 'data/ny_china_town_0350_0420/'
+data_root = 'data/face_clip/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[1, 1, 1], to_rgb=True)
 size_divisor = 32
 
 data = dict(
     samples_per_gpu=4,
-    workers_per_gpu=2,
+    workers_per_gpu=8,
     train=dict(
         typename=dataset_type,
         ann_file=data_root + 'train.pkl',
-        img_prefix=data_root + 'subset/',
+        img_prefix=data_root + 'images/',
         # min_size=1,
         # offset=0,
         pipeline=[
@@ -26,7 +26,7 @@ data = dict(
                 saturation_range=(0.5, 1.5),
                 hue_delta=18),
             dict(typename='RandomFlip', flip_ratio=0.5),
-            dict(typename='Resize', img_scale=(640, 640), keep_ratio=False),
+            dict(typename='Resize', img_scale=(720, 1440), keep_ratio=True),
             dict(typename='Normalize', **img_norm_cfg),
             dict(typename='DefaultFormatBundle'),
             dict(typename='Collect', keys=['img', 'gt_bboxes',
@@ -34,15 +34,15 @@ data = dict(
         ]),
     val=dict(
         typename=dataset_type,
-        ann_file=data_root + 'train.pkl',
-        img_prefix=data_root + 'subset/',
+        ann_file=data_root + 'val.pkl',
+        img_prefix=data_root + 'images',
         # min_size=1,
         # offset=0,
         pipeline=[
             dict(typename='LoadImageFromFile'),
             dict(
                 typename='MultiScaleFlipAug',
-                img_scale=(1100, 1650),
+                img_scale=(1080, 1920),
                 flip=False,
                 transforms=[
                     dict(typename='Resize', keep_ratio=True),
@@ -130,7 +130,7 @@ train_engine = dict(
             typename='FocalLoss',
             use_sigmoid=use_sigmoid,
             gamma=2.0,
-            alpha=0.25,
+            alpha=0.75,
             loss_weight=1.0),
         reg_decoded_bbox=True,
         loss_bbox=dict(typename='DIoULoss', loss_weight=2.0),
@@ -149,7 +149,7 @@ train_engine = dict(
             allowed_border=-1,
             pos_weight=-1,
             debug=False)),
-    optimizer=dict(typename='SGD', lr=3.75e-4, momentum=0.9, weight_decay=5e-4)) # 3 GPUS
+    optimizer=dict(typename='SGD', lr=1e-3, momentum=0.9, weight_decay=5e-4)) # 3 GPUS
 
 ## 3.2 val engine
 val_engine = dict(
@@ -175,10 +175,10 @@ hooks = [
     dict(typename='OptimizerHook'),
     dict(
         typename='CosineRestartLrSchedulerHook',
-        periods=[30] * 21,
+        periods=[20] * 21,
         restart_weights=[1] * 21,
         warmup='linear',
-        warmup_iters=500,
+        warmup_iters=110,
         warmup_ratio=1e-1,
         min_lr_ratio=1e-2),
     dict(typename='EvalHook'),
