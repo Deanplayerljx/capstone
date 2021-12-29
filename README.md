@@ -1,4 +1,33 @@
 # capstone
+The code is based on [vedadet](https://github.com/Media-Smart/vedadet).
+
+### Environment Set Up
+a.Create a conda virtual environment and activate it.
+```
+conda create -n vedadet python=3.8.5 -y
+conda activate vedadet
+```
+b.Install PyTorch (1.6.0 or higher) and torchvision.
+c. Clone the repository.
+```
+git clone https://github.com/Deanplayerljx/capstone.git
+cd capstone
+```
+d. Install vedadet.
+```
+pip install -r requirements/build.txt
+pip install -v -e .
+```
+e. Install additional dependencies.
+```
+pip install tqdm
+pip install opencv-contrib-python
+pip install cvxpy
+```
+
+### Data
+We used a short clip from [this video](https://www.youtube.com/watch?v=VD6Fc5d1VFU) (3:50-4:20) for testing. The clip can be found [here](https://drive.google.com/file/d/1Gv4O1XOem-Jwp0ICDQegC6k23MgvIUpC/view?usp=sharing). We downsampled the clip to 30 fps by saving every other frame. The extracted images can be found [here](https://drive.google.com/file/d/1xEPNLovIiK4r8-PxiaDqeap6iY4_4gdZ/view?usp=sharing)
+
 ### Tracking
 Run the following command to get fixed-lag tracking results:
 ```
