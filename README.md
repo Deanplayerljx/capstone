@@ -47,6 +47,9 @@ Run the following command for inference images, the model checkpoint is specifie
 ```
 python tools/infer.py configs/infer/tinaface/tinaface_r50_fpn_gn_dcn.py INPUT_IMG_DIR OUT_IMG_DIR
 ```
+
+Please download weights [here](https://drive.google.com/file/d/1hFSGSTHTYxdoJ7qAlkbPWOYtJDA4IRJG/view?usp=sharing). 
+
 ### Tracking
 Run the following command to get fixed-lag tracking results:
 ```
