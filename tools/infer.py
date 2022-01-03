@@ -33,7 +33,10 @@ def prepare(cfg):
     engine = build_engine(cfg.infer_engine)
 
     engine.model.to(device)
-    load_weights(engine.model, cfg.weights.filepath)
+    # load_weights(engine.model, cfg.weights.filepath)
+
+    model_filepath = 'model/y.pth'
+    load_weights(engine.model, model_filepath)
 
     data_pipeline = Compose(cfg.data_pipeline)
     return engine, data_pipeline, device
@@ -94,7 +97,8 @@ def main():
     out_folder = "tina_face_finetune_{}_{}".format(test_cfg.score_thr, test_cfg.nms.iou_thr)
     out_folder = os.path.join(args.out_base, out_folder)
     if not os.path.exists(out_folder):
-        os.mkdir(out_folder)
+        # os.mkdir(out_folder)
+        os.makedirs(out_folder)
     if args.precal_det is not None:
         with open(args.precal_det, "rb") as f:
             results = pickle.load(f)
