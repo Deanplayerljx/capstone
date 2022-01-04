@@ -31,17 +31,17 @@ We used a short clip from [this video](https://www.youtube.com/watch?v=VD6Fc5d1V
 ### Tracking
 Run the following command to get fixed-lag tracking results:
 ```
-python fixed_lay_track.py
+python fixed_lay_track.py --det_file det/file/path --img_dir img/dir/path --out_file output/file/path
 ```
 Run the following command to merge overlapping tracklets:
 ```
-python merge_overlap_2d_tracks_algo.py
+python merge_overlap_2d_tracks_algo.py --track_file fixed/lag/track/file/path --out_file output/file/path
 ```
 To visulize the tracking results, run the following command:
 ```
-python visualize_tracking.py
+python visualize_tracking.py --track_file merged/track/file/path --img_dir img/dir/path --out_dir output/folder
 ```
 Run the following command to lift tracklets to 3D (preliminary):
 ```
-python lift_3d.py
+python lift_3d.py --track_file merged/track/file/path --out_dir output/folder
 ```
