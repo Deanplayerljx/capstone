@@ -57,7 +57,8 @@ python tools/infer.py configs/infer/tinaface/tinaface_r50_fpn_gn_dcn.py INPUT_IM
 Please download weights [here](https://drive.google.com/file/d/1hFSGSTHTYxdoJ7qAlkbPWOYtJDA4IRJG/view?usp=sharing). 
 
 ### Tracking
-Run the following command to get fixed-lag tracking results:
+After running inference using the detection model,
+run the following command to get fixed-lag tracking results. The det_file here is the path to the inference results.
 ```
 python fixed_lay_track.py --det_file det/file/path --img_dir img/dir/path --out_file output/file/path
 ```
