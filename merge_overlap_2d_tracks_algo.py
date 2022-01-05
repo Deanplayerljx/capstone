@@ -12,14 +12,20 @@ from scipy.spatial.distance import pdist, squareform, cdist
 from collections import defaultdict
 import torchvision.ops as ops
 import torch
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--track_file', type=str, required=True,
+                    help='the fixed lag track result json file')
+parser.add_argument('--out_file', type=str, required=True,
+                    help='the fixed lag tracking result file')
+args = parser.parse_args()
 
 lag = 5
 mean_iou_thresh = 0.3
-track_results_filename = 'lag_{}_cross_check_track_results.json'.format(lag)
-with open(track_results_filename, 'r') as f:
+with open(args.track_file, 'r') as f:
     track_results = json.load(f)
 
-img_dir = 'data/ny_china_town_0350_0420/images'
 # recover tracklets from 
 img_names = sorted(track_results.keys())
 cur_tracklet_pool = set()
@@ -172,5 +178,5 @@ for fid, img_name in enumerate(tqdm(img_names)):
     new_track_results[img_name] = cur_new_track_result
 
 out_path = 'lag_{}_cross_check_{}_track_results_merged_algo.json'.format(lag, mean_iou_thresh)
-with open(out_path, 'w') as f:
+with open(args.out_file, 'w') as f:
     json.dump(new_track_results, f)

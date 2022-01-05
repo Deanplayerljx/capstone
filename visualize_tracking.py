@@ -5,16 +5,24 @@ import numpy as np
 from collections import defaultdict
 from tqdm import tqdm
 from scipy.ndimage import gaussian_filter1d
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--track_file', type=str, required=True,
+                    help='the fixed lag track result json file')
+parser.add_argument('--img_dir', type=str, required=True,
+                    help='the path to the image folder')
+parser.add_argument('--out_dir', type=str, required=True,
+                    help='the folder to save visualization results')
+args = parser.parse_args()
 
 lag = 5
 iou_thresh = 0.5
 mean_iou_thresh = 0.3
-track_results_path = 'lag_{}_cross_check_{}_track_results_merged_algo.json'.format(lag, mean_iou_thresh)
-with open(track_results_path, 'r') as f:
+with open(args.track_file, 'r') as f:
     track_results = json.load(f)
 
 img_names = sorted(track_results.keys())
-img_dir = 'data/ny_china_town_0350_0420/images'
 num_colors = 200
 colors = [(np.random.randint(0,256), np.random.randint(0,256), np.random.randint(0,256)) for _ in range(num_colors)]
 
@@ -185,7 +193,7 @@ def visualize_undistorted_by_id(out_img_dir, ids):
             processed_dets[fid].append({'bbox':bbox, 'id':id})
 
     for fid, img_name in enumerate(tqdm(img_names[:30])):
-        img = cv2.imread(os.path.join(img_dir, img_name))
+        img = cv2.imread(os.path.join(args.img_dir, img_name))
         img = cv2.remap(img, map1, map2, cv2.INTER_LINEAR)
         dets = processed_dets[fid]
         for det in dets:
@@ -200,9 +208,9 @@ def visualize_undistorted_by_id(out_img_dir, ids):
         cv2.imwrite(os.path.join(out_img_dir, img_name), img)
 
 
-def visualize_original():
+def visualize_original(out_img_dir):
     for img_name in tqdm(img_names[:50]):
-        img = cv2.imread(os.path.join(img_dir, img_name))
+        img = cv2.imread(os.path.join(args.img_dir, img_name))
         dets = track_results[img_name]
         for det in dets:
             bbox = [int(x) for x in det['bbox']]
@@ -219,7 +227,7 @@ def visualize_original_by_id(out_img_dir, ids):
     if not os.path.exists(out_img_dir):
         os.mkdir(out_img_dir)
     for img_name in tqdm(img_names[:30]):
-        img = cv2.imread(os.path.join(img_dir, img_name))
+        img = cv2.imread(os.path.join(args.img_dir, img_name))
         dets = track_results[img_name]
         for det in dets:
             bbox = [int(x) for x in det['bbox']]
@@ -236,7 +244,7 @@ def visualize_original_by_id(out_img_dir, ids):
 
 def main():
     all_persons = [1, 322, 491]+[2, 492]+[4, 324, 428] + [69, 624] + [50, 123, 183, 252, 301, 345, 399]
-    visualize_original_by_id('first_30_origin', all_persons)
+    visualize_original_by_id(args.out_dir, all_persons)
     # visualize_undistorted_by_id('first_30', all_persons)
 
 

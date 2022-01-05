@@ -31,7 +31,7 @@ pip install --upgrade numpy
 ```
 
 ### Data
-We used a short clip from [this video](https://www.youtube.com/watch?v=VD6Fc5d1VFU) (3:50-4:20) for testing. The clip can be found [here](https://drive.google.com/file/d/1Gv4O1XOem-Jwp0ICDQegC6k23MgvIUpC/view?usp=sharing). We downsampled the clip to 30 fps by saving every other frame. The extracted images can be found [here](https://drive.google.com/file/d/1xEPNLovIiK4r8-PxiaDqeap6iY4_4gdZ/view?usp=sharing)
+We used a short clip from [this video](https://www.youtube.com/watch?v=VD6Fc5d1VFU) (3:50-4:20) for testing. The clip can be found [here](https://drive.google.com/file/d/1Gv4O1XOem-Jwp0ICDQegC6k23MgvIUpC/view?usp=sharing). We downsampled the clip to 30 fps by saving every other frame. The extracted images can be found [here](https://drive.google.com/file/d/1xEPNLovIiK4r8-PxiaDqeap6iY4_4gdZ/view?usp=sharing). Please download the images and put them under the ```data``` folder.
 
 Dataset for detection is located in [here](https://drive.google.com/file/d/1C550hilabCcMl56DZ58enhJw_usoUKJY/view?usp=sharing). Please download and extract to `data/face_clip` before starting to do detection. 
 
@@ -59,17 +59,17 @@ Please download weights [here](https://drive.google.com/file/d/1hFSGSTHTYxdoJ7qA
 ### Tracking
 Run the following command to get fixed-lag tracking results:
 ```
-python fixed_lay_track.py
+python fixed_lay_track.py --det_file det/file/path --img_dir img/dir/path --out_file output/file/path
 ```
 Run the following command to merge overlapping tracklets:
 ```
-python merge_overlap_2d_tracks_algo.py
+python merge_overlap_2d_tracks_algo.py --track_file fixed/lag/track/file/path --out_file output/file/path
 ```
 To visulize the tracking results, run the following command:
 ```
-python visualize_tracking.py
+python visualize_tracking.py --track_file merged/track/file/path --img_dir img/dir/path --out_dir output/folder
 ```
 Run the following command to lift tracklets to 3D (preliminary):
 ```
-python lift_3d.py
+python lift_3d.py --track_file merged/track/file/path --out_dir output/folder
 ```

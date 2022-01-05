@@ -11,13 +11,19 @@ from tqdm import tqdm
 from cv_utils import iou
 from scipy.optimize import linear_sum_assignment
 from collections import defaultdict
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--det_file', type=str, required=True,
+                    help='the detection result json file')
+parser.add_argument('--img_dir', type=str, required=True,
+                    help='the path to the image folder')
+parser.add_argument('--out_file', type=str, required=True,
+                    help='the fixed lag tracking result file')
+args = parser.parse_args()
 
-det_result_path = 'data/ny_china_town_0350_0420/overfit_tina_face_0.2_0.45/result_full.json'
-with open(det_result_path, 'r') as f:
+with open(args.det_file, 'r') as f:
     det_results = json.load(f)
-
-img_dir = 'data/ny_china_town_0350_0420/images'
 
 trackers = {}
 tracker_id = 0
@@ -58,14 +64,14 @@ def get_forward_backward_imgs_from_middle(mid_fid, fid):
     imgs_f = []
     for fid_f in range(mid_fid+1, fid+1):
         img_name = img_names[fid_f]     
-        img_path = os.path.join(img_dir, img_name)
+        img_path = os.path.join(args.img_dir, img_name)
         img_f = cv2.imread(img_path)
         imgs_f.append(img_f)
 
     imgs_b = []
     for fid_b in range(mid_fid-1, max(0,mid_fid-lag)-1, -1):
         img_name = img_names[fid_b]     
-        img_path = os.path.join(img_dir, img_name)
+        img_path = os.path.join(args.img_dir, img_name)
         img_b = cv2.imread(img_path)
         imgs_b.append(img_b)
     return imgs_f, imgs_b
@@ -154,7 +160,7 @@ for fid in tqdm(range(lag, seq_len)):
     bboxes = bboxes[areas > 1]
 
     confs = dets[:, 4]
-    img_path = os.path.join(img_dir, img_name)
+    img_path = os.path.join(args.img_dir, img_name)
     img = cv2.imread(img_path)
     h, w, c = img.shape
     img = cv2.resize(img, (int(w*rescale), int(h*rescale)))
@@ -220,6 +226,5 @@ for tid in tracklets:
             'bbox':(np.array(tracklet[fid-start_fid]) / rescale).tolist(), 
             'id': tid})
 
-out_path = 'lag_{}_cross_check_track_results.json'.format(lag)
-with open(out_path, 'w') as f:
+with open(args.out_file, 'w') as f:
     json.dump(track_results, f)

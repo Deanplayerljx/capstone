@@ -8,6 +8,14 @@ import shutil
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from util.camera_pose_visualizer import CameraPoseVisualizer
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--track_file', type=str, required=True,
+                    help='the merged track result json file')
+parser.add_argument('--out_dir', type=str, required=True,
+                    help='the folder to save the visualization of lifted tracklets')
+args = parser.parse_args()
 
 DEBUG = False
 HEAD_W = 148.0 # human head width (mm)
@@ -187,8 +195,7 @@ print('******')
 
 point_cloud, point_cloud_colors = load_point_cloud()
 
-track_file_name = 'lag_5_cross_check_0.3_track_results_merged_algo.json' 
-with open(track_file_name, 'r') as f:
+with open(args.track_file, 'r') as f:
     track_results = json.load(f)
 img_names = sorted(track_results.keys())
 img_names = img_names[:30]
@@ -370,10 +377,8 @@ azim = 0
 # 3d view
 ## elev = 30
 ## azim = 10
-out_dir = 'tracklet_traj_plots_sfm_{}_change_e_{}'.format(SFM_SCALE, str(CHANGE_EXTRINSICS))
-# out_dir = 'tracklet_traj_plots_sfm_{}_change_e_{}_pc'.format(SFM_SCALE, str(CHANGE_EXTRINSICS))
-if not os.path.exists(out_dir):
-    os.mkdir(out_dir)
+if not os.path.exists(args.out_dir):
+    os.mkdir(args.out_dir)
 
 # plot_tracklet_trajs([1], ['r'], smooth_weight, elev, azim, os.path.join(out_dir, "traj_id_{}_smooth_{}_elev_{}_azim_{}.jpg".format(1, smooth_weight, elev, azim)), 'id: {}'.format(1))
 # plot_tracklet_trajs([322], ['r'], smooth_weight, elev, azim, os.path.join(out_dir,"traj_id_{}_smooth_{}_elev_{}_azim_{}.jpg".format(322, smooth_weight, elev, azim)), 'id: {}'.format(322))
@@ -392,5 +397,5 @@ if not os.path.exists(out_dir):
 
 all_persons = [1, 322, 491]+[2, 492]+[4, 324, 428] + [69, 624] + [50, 123, 183, 252, 301, 345, 399]
 all_colors = ['r']*3+['b']*2+['y']*3 + ['c'] * 2 + ['m'] * 7
-plot_tracklet_trajs(all_persons, all_colors, smooth_weight, elev, azim, os.path.join(out_dir, "traj_all_smooth_{}_elev_{}_azim_{}.jpg".format(smooth_weight, elev, azim)), 'all traj')
+plot_tracklet_trajs(all_persons, all_colors, smooth_weight, elev, azim, os.path.join(args.out_dir, "traj_all_smooth_{}_elev_{}_azim_{}.jpg".format(smooth_weight, elev, azim)), 'all traj')
 
